@@ -114,7 +114,7 @@ int main() {
         oss << speed;
         mystr=oss.str();
 
-        if (Speed >= 10) {
+        if (speed >= 10) {
             char *speed_str = new char[3 + 5];
             speed_str[0] = ' ';
             speed_str[1] = mystr.c_str()[0];
