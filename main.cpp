@@ -7,7 +7,8 @@
  *      EFM32(WG-STK3800) Wonder Gecko Board Program. This program displays dashboard data onto its 8x20 Segment LCD.
  * @notes: Projected display configuration (see https://os.mbed.com/teams/SiliconLabs/code/EFM32_SegmentLCD//file/114aa75da77b/segmentlcd.h/):
  *      current speed   - display first 2 digits (we're never going above 50mph, let's face it), then "mph" on 3, 4, 5, 6, 7 of the LCDs
- *          NOTE: They come in as m/s and must be converted.
+ *          We can also display the tenths place digit.
+ *          NOTE: They come in as m/s and must be converted to mph.
  *      cruise control enable
  *          disabled    - PAD0 off, PAD1 off
  *          enabled     - PAD0 on
