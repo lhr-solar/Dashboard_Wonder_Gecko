@@ -7,7 +7,7 @@
  *      EFM32(WG-STK3800) Wonder Gecko Board Program. This program displays dashboard data onto its 8x20 Segment LCD.
  * @notes: Projected display configuration (see https://os.mbed.com/teams/SiliconLabs/code/EFM32_SegmentLCD//file/114aa75da77b/segmentlcd.h/):
  *      current speed   - display first 2 digits (we're never going above 50mph, let's face it), then "mph" on 3, 4, 5, 6, 7 of the LCDs
- * 
+ *          NOTE: They come in as m/s and must be converted.
  *      cruise control enable
  *          disabled    - PAD0 off, PAD1 off
  *          enabled     - PAD0 on
@@ -32,6 +32,8 @@ using namespace std;
 #define OFF 0
 #define ON 1
 
+constexpr double METERS_PER_SECOND_TO_MILES_PER_HOUR = 2.23694;
+
 DigitalOut led1(LED1);
 DigitalOut led2(LED0);
  
@@ -40,7 +42,7 @@ Serial device(PD4, PD5); // TX, RX
 char msg[25] = {0}; // initialize to null
 
 // data grabbed from serial line
-int speed;
+float speed;
 int cruiseControlEnabled;
 int cruiseControlSet;
 int regenEnabled;
@@ -75,7 +77,7 @@ int main() {
         pc.printf("%s\n",msg);
 
         // grab data
-        sscanf(msg, "%d,%d,%d,%d,%d", 
+        sscanf(msg, "%f,%d,%d,%d,%d", 
             &speed, 
             &cruiseControlEnabled, 
             &cruiseControlSet, 
@@ -111,15 +113,18 @@ int main() {
 
         ostringstream oss;
         string mystr;
+
+        // convert speed into mph first - the are currently in m/s
+        speed *= METERS_PER_SECOND_TO_MILES_PER_HOUR;
         oss << speed;
         mystr=oss.str();
 
-        if (speed >= 10) {
+        if (speed >= 10) { // 10 since we've reached double digits
             char *speed_str = new char[3 + 5];
-            speed_str[0] = ' ';
-            speed_str[1] = mystr.c_str()[0];
-            speed_str[2] = mystr.c_str()[1];
-            speed_str[3] = ' ';
+            speed_str[0] = mystr.c_str()[0];
+            speed_str[1] = mystr.c_str()[1];
+            speed_str[2] = '.';
+            speed_str[3] = mystr.c_str()[3];
             speed_str[4] = 'm';
             speed_str[5] = 'p';
             speed_str[6] = 'h';
@@ -130,8 +135,8 @@ int main() {
             char *speed_str = new char[2 + 6];
             speed_str[0] = ' ';
             speed_str[1] = mystr.c_str()[0];
-            speed_str[2] = ' ';
-            speed_str[3] = ' ';
+            speed_str[2] = '.';
+            speed_str[3] = mystr.c_str()[2];
             speed_str[4] = 'm';
             speed_str[5] = 'p';
             speed_str[6] = 'h';
