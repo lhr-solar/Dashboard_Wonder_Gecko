@@ -2,7 +2,7 @@
  * main.cpp
  * @authors:    Matthew Yu
  *              William Blount
- * @last_modified: 2/22/20
+ * @last_modified: 2/29/20
  * @description:
  *      EFM32(WG-STK3800) Wonder Gecko Board Program. This program displays dashboard data onto its 8x20 Segment LCD.
  * @notes: Projected display configuration (see https://os.mbed.com/teams/SiliconLabs/code/EFM32_SegmentLCD//file/114aa75da77b/segmentlcd.h/):
@@ -33,7 +33,7 @@ using namespace std;
 #define OFF 0
 #define ON 1
 
-constexpr double METERS_PER_SECOND_TO_MILES_PER_HOUR = 2.23694;
+const double METERS_PER_SECOND_TO_MILES_PER_HOUR = 2.23694;
 
 DigitalOut led1(LED1);
 DigitalOut led2(LED0);
@@ -86,7 +86,7 @@ int main() {
             &CANError);
 
         // can flag display
-        if(CAN_flag) {
+        if(CANError) {
             SegmentLCD_Symbol(LCD_SYMBOL_ANT, ON);
         }else {
             SegmentLCD_Symbol(LCD_SYMBOL_ANT, OFF);
@@ -94,14 +94,14 @@ int main() {
 
         // regen flag display
         if(regenEnabled) {
-            SegmentLCD_Symbol(LCD_SYMBOL_GEK, ON);
+            SegmentLCD_Symbol(LCD_SYMBOL_GECKO, ON);
         }else {
-            SegmentLCD_Symbol(LCD_SYMBOL_GEK, OFF);
+            SegmentLCD_Symbol(LCD_SYMBOL_GECKO, OFF);
         }
 
         // cruise control display
         if(cruiseControlEnabled) {
-            SegmentLCD_Symbol(LCD_SYMBOL_PAD0, ON;
+            SegmentLCD_Symbol(LCD_SYMBOL_PAD0, ON);
             if(cruiseControlSet) {
                 SegmentLCD_Symbol(LCD_SYMBOL_PAD1, ON);
             }else {
